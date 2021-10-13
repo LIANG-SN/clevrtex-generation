@@ -48,13 +48,24 @@ class SamplingConfig:
         self.materials = []
         for mat_name, name in self.conf.get('materials', {}).items():
             # utils.load_material(name, material_dir)
-            self.materials.append((mat_name, name))
+            # self.materials.append((mat_name, name))
+
+            # reading materials seems have some issue, set materials below
+            pass
+        # set materials here
+        my_materials = ["poliigongroundforest003", 
+                        "poliigonwoodplanks028",
+                        "poliigonbrickspaintedwhite001",
+                        "poliigonbricksflemishred001",
+                        "rubber",
+                        "tabularasa"]
         if len(self.materials) == 0 or scan_dirs:
             self.materials = []
             for mp in material_dir.glob('*.blend'):
                 # name = mp.stem
                 # utils.load_material(name, str(material_dir))
-                self.materials.append((mp.stem.lower(), mp))
+                if mp.stem.lower() in my_materials:
+                    self.materials.append((mp.stem.lower(), mp))
         self.mat_map = dict(self.materials)
         # print([m for m in self.mat_map])
 

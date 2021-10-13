@@ -19,17 +19,21 @@ class SceneWrapper:
 
         self._ref = bpy.context.scene
         self._ref.use_nodes = True  # Turn on output compositor
+        self._ref.render.use_multiview = False
+        self._ref.render.views_format = 'STEREO_3D'
 
         self.node_tree = self._ref.node_tree
         self.view_layer = self._ref.view_layers[0]
 
-        self.output_layers_node = None
-        for n in self.node_tree.nodes:
-            if n.name == 'Render Layers':
-                self.output_layers_node = n
-                break
-        else:
-            raise RuntimeError("Could not locate root Compositor node for layer output")
+        self.output_layers_node = self.node_tree.nodes.new(type="CompositorNodeRLayers")
+
+        # self.output_layers_node = None
+        # for n in self.node_tree.nodes:
+        #     if n.name == 'Render Layers':
+        #         self.output_layers_node = n
+        #         break
+        # else:
+        #     raise RuntimeError("Could not locate root Compositor node for layer output")
 
     @property
     def ground(self):

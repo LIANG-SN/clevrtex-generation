@@ -36,5 +36,9 @@
     "material": {
       "exclude":  ["tabularasa", "rubber", "mymetal"]
     }
+  },
+  "materials" : {
+    "poliigongroundforest003":  "data/materials/PoliigonGroundForest003.blend",
+    "poliigonwoodplanks028": "data/materials/PoliigonWoodPlanks028.blend"
   }
 }

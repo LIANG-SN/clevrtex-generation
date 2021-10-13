@@ -2,15 +2,11 @@
   "shapes": {
     "cube": {
       "name": "Cube",
-      "material": {"include":  ["rubber", "mymetal"]}
+      "material": {"include":  ["poliigongroundforest003"]}
     },
     "sphere": {
       "name": "Sphere",
-      "material": {"include":  ["rubber", "mymetal"]}
-    },
-    "cylinder": {
-      "name": "Cylinder",
-      "material": {"include":  ["rubber", "mymetal"]}
+      "material": {"include":  ["poliigonbricksflemishred001"]}
     }
   },
   "colors": {
@@ -25,8 +21,8 @@
   },
   "sizes": {
     "large": 0.9,
-    "medium": 0.6,
-    "small": 0.4
+    "medium": 0.75,
+    "small": 0.6
   },
   "ground" : {
     "material": {

@@ -47,7 +47,7 @@ def configure_cycles(output_path, width, height, tile_size, num_samples, min_bou
     bpy.context.scene.cycles.transparent_max_bounces = max_bounces
 
 
-def compositor_output(out_socket, node_tree, output_path_prefix, set_bw=False, mkdir=True, frame_id=1):
+def compositor_output(out_socket, node_tree, output_path_prefix, output_node, set_bw=False, mkdir=True, frame_id=1):
     out_dir = Path(output_path_prefix).parent
     if mkdir:
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -56,7 +56,7 @@ def compositor_output(out_socket, node_tree, output_path_prefix, set_bw=False, m
 
     out_name = Path(output_path_prefix).name
 
-    output_node = node_tree.nodes.new('CompositorNodeOutputFile')
+    # output_node = node_tree.nodes.new('CompositorNodeOutputFile')
     output_node.base_path = str(out_dir)
     output_node.file_slots[0].path = str(out_name)
 
