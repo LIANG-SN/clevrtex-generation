@@ -105,8 +105,20 @@ def add_object_geometry(object_path, scale, loc, rotation=0):
         if obj.name.startswith(name):
             count += 1
 
+    # test
+
     filename = object_path / 'Object' / name
     bpy.ops.wm.append(filename=str(filename))
+
+
+    # for obj in bpy.data.objects:
+    #     if obj.name == 'Camera' or obj.name == 'Area' or obj.name == 'Empty' \
+    #         or obj.name == 'Ground' or obj.name.startswith('Lamp'):
+    #         continue
+    #     print('hi')
+    #     print(obj.name)
+    #     print(filename)
+    # exit()
 
     # Give it a new name to avoid conflicts
     new_name = f'{name}_{count}'
@@ -115,11 +127,112 @@ def add_object_geometry(object_path, scale, loc, rotation=0):
     # Set the new object as active, then rotate, scale, and translate it
     x, y = loc
     o = bpy.data.objects[new_name]
-    o.select_set(state=True, view_layer=bpy.context.view_layer)
+    z = scale
+    scale_x = scale_y = scale_z = scale
+    if new_name == 'table_0':
+        scale_x = scale_y = 1.5
+        scale_z = 0.8
+        x, y, z = 0, 0, 0.6
+        rotation = 0
+    elif new_name == 'chair_0':
+        scale = 1.4
+        x, y, z = -1.5, 0, 0.2
+        rotation = 1.57079632679
+    elif new_name == 'chair_1':
+        scale = 1.4
+        x, y, z = 1.5, 0, 0.2
+        rotation = -1.57079632679
+    # for room 2
+    # elif new_name == 'table_0':
+    #     scale_x = scale_y = 1.6
+    #     scale_z = 1.6
+    #     x, y, z = 2, 0, 1
+    #     rotation = 0
+    # elif new_name == 'easychair_0':
+    #     scale_x = scale_y = scale_z = 0.9
+    #     x, y, z = 0, 0, 0.2
+    #     rotation = 3.1415926
+    # elif new_name == 'chair2_0':
+    #     scale_x = scale_y = scale_z = 0.6
+    #     x, y, z = 2, -2.5, 0.2
+    #     rotation = 3.1415926
+    elif new_name == 'tiger_0':
+        scale_x = scale_y = scale_z = 1.1
+        x, y, z = -1.5, 0, 0.35
+        rotation = (1.57079632679) * 0.7
+    elif new_name == 'pig_0':
+        scale_x = scale_y = scale_z = 0.22
+        x, y, z = 2, -1, 0.5
+        rotation = 0
+    elif new_name == 'teapot_0':
+        scale_x = scale_y = scale_z = 0.65
+        x, y, z = 2, 0, 0.5
+        rotation = 3.1415926
+    elif new_name == 'teacup_0':
+        scale_x = scale_y = scale_z = 0.6
+        x, y, z = -2, 0, 0.2
+        rotation = 3.1415926
+    elif new_name == 'sofa_0':
+        scale_x = scale_y = scale_z = 2
+        x, y, z = 1.5, 0, 0.1
+        rotation = -3.1415926 / 2
+    elif new_name == 'table2_0':
+        scale_x = scale_y = 3
+        scale_z = 1.5
+        x, y, z = -1.5, 0, 0.1
+        rotation = 3.1415926 / 2
+    # for room 4
+    elif new_name == 'chair2_0':
+        scale_x = scale_y = scale_z = 0.9
+        x, y, z = 2, 0, 0.2
+        rotation = -3.1415926 / 2
+    elif new_name == 'chair2_1':
+        scale_x = scale_y = scale_z = 0.9
+        x, y, z = -2, 0, 0.2
+        rotation = 3.1415926 / 2
+    elif new_name == 'chair2_2':
+        scale_x = scale_y = scale_z = 0.9
+        x, y, z = 0, -2, 0.2
+        rotation = 3.1415926
+    elif new_name == 'chair2_3':
+        scale_x = scale_y = scale_z = 0.9
+        x, y, z = 0, 2, 0.2
+        rotation = 0
+    elif new_name == 'tank_0':
+        scale_x = scale_y = scale_z = 0.6
+        x, y, z = 0, 2, 0
+        rotation = 0
+    elif new_name == 'tank_1':
+        scale_x = scale_y = scale_z = 0.6
+        x, y, z = 0, -2, 0
+        rotation = 0
+    elif new_name == 'helicopter_0':
+        scale_x = scale_y = scale_z = 0.4
+        x, y, z = 0, 0, 2
+        rotation = 3.1415926 / 2
+    elif new_name == 'brachiosaurus_0':
+        scale_x = scale_y = scale_z = 0.1
+        x, y, z = -1.5, 0, 0.2
+        rotation = 0
+    elif new_name == 'dimetrodon_0':
+        scale_x = scale_y = scale_z = 0.75
+        x, y, z = 2, 0, 0
+        rotation = 0
+    elif new_name == 'desk_0':
+        scale_x = scale_y = scale_z = 0.5
+        x, y, z = 1.0873931884765625, -1.8874120235443115 , -3.4 * 0.5
+        rotation = 0
+    elif new_name == 'easychair_0':
+        scale_x = scale_y = scale_z = 0.7
+        x, y, z = 1.5847854137420654, 3.4898265361785889, 0.
+        rotation = 1.5707963
+
+    
+    # room 4 ends
     bpy.context.view_layer.objects.active = o
     bpy.context.object.rotation_euler[2] = rotation  # Rotate around z
-    bpy.ops.transform.resize(value=(scale, scale, scale))
-    bpy.ops.transform.translate(value=(x, y, scale))
+    bpy.ops.transform.resize(value=(scale_x, scale_y, scale_z))
+    bpy.ops.transform.translate(value=(x, y, z))
     o.select_set(state=False, view_layer=bpy.context.view_layer)
 
 
@@ -156,6 +269,10 @@ def add_material(obj, mat_path, **properties):
 
     # Attach the new material to the object
     # Make sure it doesn't already have materials
+
+    for i in range(len(obj.data.materials)):
+        # print(obj.name, len(obj.data.materials))
+        obj.data.materials.pop()
     assert len(
         obj.data.materials) == 0, f"{obj.name} has multiple materials ({', '.join(m.name for m in obj.data.materials if m is not None)}), adding {name} will fail"
     obj.data.materials.append(mat)
@@ -201,9 +318,10 @@ def add_material(obj, mat_path, **properties):
                 raise ValueError(f"Cannot resolve material output for {mat.name}")
 
     for inp in group_node.inputs:
+        # print(inp.name)
         if inp.name in properties:
             inp.default_value = properties[inp.name]
-
+    # exit()
     return mat
 
 
