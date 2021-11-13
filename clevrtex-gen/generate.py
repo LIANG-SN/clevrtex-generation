@@ -96,6 +96,8 @@ def main(args):
 
         # num_objects = random.randint(args.min_objects, args.max_objects)
         num_objects = 2
+        # todo: desk
+        # finished: room3, room4, animal1&2, teapot, army, room
         while True:
             try:
                 TRIES += 1
@@ -152,24 +154,25 @@ def render_scene(args,
     jitter_array_fn = lambda s: (np.array([random.random(), random.random(), random.random()]) - 0.5) * 2.0 * s
 
     scene.camera.location = tuple(np.array(scene.camera.location) + jitter_array_fn(CAMERA_JITTER))
-    scene.keylamp.location = tuple(np.array(scene.keylamp.location) + jitter_array_fn(KEY_LIGHT_JITTER))
-    scene.backlamp.location = tuple(np.array(scene.backlamp.location) + jitter_array_fn(BACK_LIGHT_JITTER))
-    scene.filllight.location = tuple(np.array(scene.filllight.location) + jitter_array_fn(FILL_LIGHT_JITTER))
+    # scene.keylamp.location = tuple(np.array(scene.keylamp.location) + jitter_array_fn(KEY_LIGHT_JITTER))
+    # scene.backlamp.location = tuple(np.array(scene.backlamp.location) + jitter_array_fn(BACK_LIGHT_JITTER))
+    # scene.filllight.location = tuple(np.array(scene.filllight.location) + jitter_array_fn(FILL_LIGHT_JITTER))
 
     # Add ground material
-    name, material_path = sampling_conf.sample_ground_mat()
-    utils.add_material(scene.ground, material_path,
-                       Color=(*[random.random() for _ in range(3)], 0),
-                       Random=random.random(),
-                       Displacement=0.35,
-                       Scale=2.)
-    metadata['ground_material'] = name
+    if not args.mask:
+        name, material_path = sampling_conf.sample_ground_mat()
+        utils.add_material(scene.ground, material_path,
+                           Color=(*[random.random() for _ in range(3)], 0),
+                           Random=random.random(),
+                           Displacement=0.35,
+                           Scale=2.)
+        metadata['ground_material'] = name
 
     metadata['directions'] = clevr_qa.compute_directions()
 
     # Populate scene geometry
-    for i in range(3):
-      scene.camera.location[i] *= 0.8
+    # for i in range(3):
+    #   scene.camera.location[i] *= 0.2
 
     objects, blender_objects = add_random_objects(args, metadata['directions'], num_objects, scene.camera,
                                                   sampling_conf)
@@ -208,11 +211,18 @@ def render_scene(args,
         #                                                  str(output_image).replace('.png', ''))
 
         # obj_mask_imgs.append(obj_mask_path)
+        if (not args.mask) or (args.mask and args.mask_id == i):
+            meta['color'], rgba = sampling_conf.sample_color_for_shape(meta['shape'])
+            meta['material'], mat_path = sampling_conf.sample_material_for_shape(meta['shape'])
+            utils.add_material(obj, mat_path, Color=rgba, Random=random.random())
+            print(f'Set {obj.name} to {meta["material"]} from {mat_path}')
+        else:
+            meta['color'], rgba = ('dark', [0, 0, 0, 0])
+            # meta['material'], mat_path = sampling_conf.sample_material_for_shape(meta['shape'])
+            meta['material'], mat_path = ('rubber', sampling_conf.mat_map['rubber'])
+            utils.add_material(obj, mat_path, Color=rgba, IOR=1, Random=random.random())
 
-        meta['color'], rgba = sampling_conf.sample_color_for_shape(meta['shape'])
-        meta['material'], mat_path = sampling_conf.sample_material_for_shape(meta['shape'])
-        utils.add_material(obj, mat_path, Color=rgba, Random=random.random())
-        print(f'Set {obj.name} to {meta["material"]} from {mat_path}')
+        
     metadata['objects'] = objects
 
     if args.missing_filepath_prefix is not None:
@@ -236,7 +246,7 @@ def render_scene(args,
 
     output_image_dir = output_path / 'images'
     output_info_dir = output_path / 'info'
-    output_depth_dir = output_path / 'depth'
+    output_depth_dir = output_path / 'depth_exr'
     output_image_dir.mkdir(parents=True, exist_ok=True)
     output_info_dir.mkdir(parents=True, exist_ok=True)
     output_depth_dir.mkdir(parents=True, exist_ok=True)
@@ -253,12 +263,13 @@ def render_scene(args,
     scene_args.world.mist_settings.falloff = 'LINEAR'
     #minimum depth:
     scene_args.world.mist_settings.intensity = 0.0
+    scene_args.world.mist_settings.start = 0
     #maximum depth (can be changed depending on the scene geometry to normalize the depth map whatever the camera orientation and position is):
-    scene_args.world.mist_settings.depth = 30.
-    for i in range(100):
+    scene_args.world.mist_settings.depth = 100
+    for i in range(args.N_imgs):
         # file name
-        output_image_path = Path(str(output_image_dir) + f'/{i:03}.png')
-        output_depth_path_pre = Path(str(output_depth_dir) + f'/{i:03}.png')
+        output_image_path = Path(str(output_image_dir) + f'/r_{i}.png')
+        output_depth_path_pre = Path(str(output_depth_dir) + f'/depth_exr_{i}.exr')
         utils.configure_cycles(output_image_path,
                            args.width,
                            args.height,
@@ -284,28 +295,56 @@ def render_scene(args,
         metadata['image_filename'] = str(output_image_path.name)
 
         # camera
-        if i!=0:
-            alpha=(i%20) / 20. * 360.
-            phi=80. - np.floor(i/5) / 20. * 80.
+        if not (args.mask or args.only_depth):
+            if i!=0:
+                alpha=(i%40) / 40. * 360.
+                phi=55. - np.floor(i/5) / 15. * 55.
 
-            location = pose_spherical(alpha,phi,length)
+                location = pose_spherical(alpha,phi,length)
 
+                for j in range(3):
+                  scene.camera.location[j] = location[j]#rand(args.camera_jitter)
+                print(scene.camera.matrix_world)
+
+                # cam2w['cam2world'] = metadata['cam2world']
+        else:
+            with open(os.path.join(args.pose_dir, f'{i:03}.json'), 'r') as f:
+                scene_struct = json.load(f)
+                c2w=scene_struct['cam2world']
             for j in range(3):
-              scene.camera.location[j] = location[j]#rand(args.camera_jitter)
-            print(scene.camera.matrix_world)
-
-            metadata['cam2world'] = tuple(tuple(row) for row in scene.camera.matrix_world)
-            metadata['image_index'] = i
-            # cam2w['cam2world'] = metadata['cam2world'] 
+                scene.camera.location[j] = c2w[j][3]#rand(args.camera_jitter)
         
         # Render the scene
-
-        scene.view_layer.use_pass_mist = True
-        scene.node_tree.links.new(
-            scene.output_layers_node.outputs['Mist'],
-            output_node.inputs['Image'])
-        render_args.filepath = str(output_depth_path_pre)
-        bpy.ops.render.render(write_still=True)
+        if not args.mask:
+            # scene.view_layer.use_pass_mist = True
+            # scene.node_tree.links.new(
+            #     scene.output_layers_node.outputs['Mist'],
+            #     output_node.inputs['Image'])
+            # render_args.filepath = str(output_depth_path_pre)
+            # bpy.ops.render.render(write_still=True)
+            
+            
+            # import inspect
+            # print(inspect.getmembers(scene.output_layers_node.outputs, lambda a:not(inspect.isroutine(a))))
+            # scene.view_layer.use_pass_z = True
+            # R(render) layer node: output image, alpha, depth...
+            map_node = scene.node_tree.nodes.new('CompositorNodeMapRange')
+            map_node.inputs[1].default_value = 0 # from min
+            map_node.inputs[2].default_value = 30
+            map_node.inputs[3].default_value = 0
+            # map_node.inputs[4].default_value = 1
+            scene.node_tree.links.new(
+                scene.output_layers_node.outputs['Depth'],
+                map_node.inputs[0])
+            scene.node_tree.links.new(
+                map_node.outputs[0],
+                output_node.inputs['Image'])
+            render_args.image_settings.file_format = "OPEN_EXR"
+            render_args.image_settings.color_depth = '32'
+            render_args.filepath = str(output_depth_path_pre)
+            bpy.ops.render.render(write_still=True)
+        if args.only_depth:
+            continue
 
         scene.node_tree.links.new(
             scene.output_layers_node.outputs['Image'],
@@ -324,6 +363,9 @@ def render_scene(args,
         #     omi.unlink()
 
         # metadata['mask_filename'] = str(mask_out_path.name)
+        
+        metadata['cam2world'] = tuple(tuple(row) for row in scene.camera.matrix_world)
+        metadata['image_index'] = i
 
         with Path(str(output_info_dir) + f'/{i:03}.json').open('w') as f:
             json.dump(metadata, f, indent=2)
@@ -423,6 +465,11 @@ def sample_random_objects(args, directions, num_objects, conf):
         size_name, r = conf.sample_size()
         # obj_name_out, obj_path = conf.sample_shape()
         obj_name_out, obj_path = conf.shapes[i]
+
+        # if obj_name_out == 'tiger':
+        #     size_name, r = ('tiger', 0.15)
+        # elif obj_name_out == 'pig':
+        #     size_name, r = ('pig', 0.075)
 
         pos, obj = sample_position(obj_name_out, r, positions, directions, args)
         positions.append(pos)
@@ -758,7 +805,16 @@ if __name__ == '__main__':
 
     parser.add_argument('--missing_filepath_prefix', default=None,
                         help="Path for remapping resource (texture) locations")
-
+    parser.add_argument('--mask', default=False, action='store_true',
+                        help="render mask")
+    parser.add_argument('--pose_dir', default='../output/clevrtex_animal/0/info', type=str,
+                        help="render mask pose dir")
+    parser.add_argument('--mask_id', default=1, type=int,
+                        help="obj id for mask")
+    parser.add_argument('--N_imgs', default=100, type=int,
+                        help="# images generated")
+    parser.add_argument('--only_depth', default=False, action='store_true',
+                        help="depth")
     argv = sys.argv
     if '--' in argv:
         argv = argv[argv.index('--') + 1:]

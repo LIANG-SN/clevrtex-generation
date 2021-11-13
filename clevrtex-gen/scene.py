@@ -12,10 +12,10 @@ class SceneWrapper:
 
         self._objects = bpy.data.objects
         assert CAMERA in self._objects
-        assert KEYLAMP in self._objects
-        assert BACKLAMP in self._objects
-        assert FILLLIGHT in self._objects
-        assert GROUND in self._objects
+        # assert KEYLAMP in self._objects
+        # assert BACKLAMP in self._objects
+        # assert FILLLIGHT in self._objects
+        # assert GROUND in self._objects
 
         self._ref = bpy.context.scene
         self._ref.use_nodes = True  # Turn on output compositor
