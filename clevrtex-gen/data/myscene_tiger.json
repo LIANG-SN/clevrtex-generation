@@ -1,0 +1,23 @@
+{
+    "shapes": {
+      "tiger": {
+        "name": "tiger",
+        "material": {"include":  ["rubber"]}
+      },
+      "pig": {
+        "name": "pig",
+        "material": {"include":  ["rubber"]}
+      }
+    },
+    "colors": {
+      "blue": [42, 75, 215]
+    },
+    "sizes": {
+      "medium": 0.75
+    },
+    "ground" : {
+      "material": {
+        "include":  ["poliigongroundforest003"]
+      }
+    }
+  }

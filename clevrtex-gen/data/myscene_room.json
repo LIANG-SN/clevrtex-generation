@@ -1,0 +1,27 @@
+{
+    "shapes": {
+      "table": {
+        "name": "table",
+        "material": {"include":  ["poliigonwoodflooring044"]}
+      },
+      "chair1": {
+        "name": "chair",
+        "material": {"include":  ["rubber"]}
+      },
+      "chair2": {
+        "name": "chair",
+        "material": {"include":  ["rubber"]}
+      }
+    },
+    "colors": {
+      "blue": [42, 75, 215]
+    },
+    "sizes": {
+      "medium": 1.5
+    },
+    "ground" : {
+      "material": {
+        "include":  ["poliigonbrickspaintedwhite001"]
+      }
+    }
+}

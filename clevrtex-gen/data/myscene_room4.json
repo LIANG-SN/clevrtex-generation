@@ -1,0 +1,31 @@
+{
+    "shapes": {
+      "room4_chair_1": {
+        "name": "chair2",
+        "material": {"include":  ["rubber"]}
+      },
+      "room4_chair_2": {
+        "name": "chair2",
+        "material": {"include":  ["rubber"]}
+      },
+      "room4_chair_3": {
+        "name": "chair2",
+        "material": {"include":  ["rubber"]}
+      },
+      "room4_chair_4": {
+        "name": "chair2",
+        "material": {"include":  ["rubber"]}
+      }
+    },
+    "colors": {
+      "blue": [42, 75, 215]
+    },
+    "sizes": {
+      "medium": 1.5
+    },
+    "ground" : {
+      "material": {
+        "include":  ["poliigonwoodflooring044"]
+      }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "shapes": {
+      "table": {
+        "name": "table2",
+        "material": {"include":  ["poliigonwoodflooring044"]}
+      },
+      "sofa": {
+        "name": "sofa",
+        "material": {"include":  ["rubber"]}
+      }
+    },
+    "colors": {
+      "blue": [42, 75, 215]
+    },
+    "sizes": {
+      "medium": 1.5
+    },
+    "ground" : {
+      "material": {
+        "include":  ["poliigonbrickspaintedwhite001"]
+      }
+    }
+}

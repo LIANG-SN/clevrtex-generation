@@ -1,0 +1,27 @@
+{
+    "shapes": {
+      "brachiosaurus": {
+        "name": "brachiosaurus",
+        "material": {"include":  ["rubber"]}
+      },
+      "dimetrodon": {
+        "name": "dimetrodon",
+        "material": {"include":  ["poliigongroundforest003"]}
+      }
+    },
+    "colors": {
+      "red": [173, 35, 35],
+      "blue": [42, 75, 215],
+      "green": [29, 105, 20],
+      "purple": [129, 38, 192],
+      "yellow": [255, 238, 51]
+    },
+    "sizes": {
+      "medium": 0.75
+    },
+    "ground" : {
+      "material": {
+        "include":  ["poliigoncitystreetasphaltgenericcracked002"]
+      }
+    }
+  }
