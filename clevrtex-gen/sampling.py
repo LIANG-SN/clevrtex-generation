@@ -58,7 +58,15 @@ class SamplingConfig:
                         "poliigonbrickspaintedwhite001",
                         "poliigonbricksflemishred001",
                         "rubber",
-                        "tabularasa"]
+                        "tabularasa",
+                        "poliigonwoodflooringmahoganyafricansanded001",
+                        "poliigonwoodflooring044",
+                        "poliigoncliffjagged004",
+                        "poliigoncitystreetasphaltgenericcracked002",
+                        "poliigonmarble062",
+                        "poliigontilesmarblesagegreenbrickbondhoned001",
+                        "poliigonfabricdenim003",
+                        "poliigonwoodfinedark004"]
         if len(self.materials) == 0 or scan_dirs:
             self.materials = []
             for mp in material_dir.glob('*.blend'):
@@ -119,6 +127,57 @@ class SamplingConfig:
         if self.same_material:
             return self._color
         n, v = random.choice(self.colors)
+        if shape == 'tiger':
+            n = 'yellow'
+            v = [84, 51, 1]
+        elif shape == 'pig':
+            n = 'pink'
+            v = [227, 143, 247]
+        elif shape == 'chair1':
+            n = 'blue'
+            v = [42, 75, 215]
+        elif shape == 'chair2':
+            n = 'red'
+            v = [69, 3, 5]
+        elif shape == 'easychair1':
+            n = 'blue'
+            v = [42, 75, 215]
+        elif shape == 'chair2':
+            n = 'red'
+            v = [69, 3, 5]
+        elif shape == 'teapot':
+            n = 'brown'
+            v = [26, 15, 5]
+        elif shape == 'teacup':
+            n = 'blue'
+            v = [42, 75, 215]
+        elif shape == 'sofa':
+            n = 'pink'
+            v = [252, 126, 252]
+        elif shape == 'room4_chair_1':
+            n = 'red'
+            v = [69, 3, 5]
+        elif shape == 'room4_chair_2':
+            n = 'blue'
+            v = [42, 75, 215]
+        elif shape == 'room4_chair_3':
+            n = 'green'
+            v = [29, 77, 27]
+        elif shape == 'room4_chair_4':
+            n = 'gray'
+            v = [171, 181, 170]
+        elif shape == 'army_tank_1':
+            n = 'dark green'
+            v = [0, 7, 0]
+        elif shape == 'army_tank_2':
+            n = 'sand'
+            v = [59, 44, 0]
+        elif shape == 'army_helicopter':
+            n = 'blue'
+            v = [47, 109, 161]
+        elif shape == 'brachiosaurus':
+            n = 'sand'
+            v = [59, 44, 0]
         return n, [*[c/255. for c in v], 0]
 
     def sample_ground_mat(self):

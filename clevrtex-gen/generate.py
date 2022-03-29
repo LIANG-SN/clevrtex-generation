@@ -95,7 +95,7 @@ def main(args):
         output_prefix_path = output_path / basename_prefix
 
         # num_objects = random.randint(args.min_objects, args.max_objects)
-        num_objects = 2
+        num_objects = args.n_my_objects
         # todo: desk
         # finished: room3, room4, animal1&2, teapot, army, room
         while True:
@@ -266,7 +266,12 @@ def render_scene(args,
     scene_args.world.mist_settings.start = 0
     #maximum depth (can be changed depending on the scene geometry to normalize the depth map whatever the camera orientation and position is):
     scene_args.world.mist_settings.depth = 100
-    for i in range(args.N_imgs):
+    # for uorf
+    if args.mask: 
+        render_start = 200
+    else:
+        render_start = 0
+    for i in range(render_start, args.N_imgs):
         # file name
         output_image_path = Path(str(output_image_dir) + f'/r_{i}.png')
         output_depth_path_pre = Path(str(output_depth_dir) + f'/depth_exr_{i}.exr')
@@ -313,6 +318,15 @@ def render_scene(args,
                 c2w=scene_struct['cam2world']
             for j in range(3):
                 scene.camera.location[j] = c2w[j][3]#rand(args.camera_jitter)
+
+        # read uorf pose
+        # pose_file_name = os.path.join('data/clevr_567_train_pose',
+        #     '{:05d}_sc{:04d}_az{:02d}_RT.txt'.format(i, i//4, i%4))
+        # with open(pose_file_name) as f:
+        #     lines = f.read().splitlines()
+        #     for j in range(3):
+        #         scene.camera.location[j] = np.float32(lines[j].split(' ')[3])
+        #     print('read from {}'.format(pose_file_name))
         
         # Render the scene
         if not args.mask:
@@ -328,6 +342,8 @@ def render_scene(args,
             # print(inspect.getmembers(scene.output_layers_node.outputs, lambda a:not(inspect.isroutine(a))))
             # scene.view_layer.use_pass_z = True
             # R(render) layer node: output image, alpha, depth...
+
+            # render depth
             map_node = scene.node_tree.nodes.new('CompositorNodeMapRange')
             map_node.inputs[1].default_value = 0 # from min
             map_node.inputs[2].default_value = 30
@@ -349,6 +365,7 @@ def render_scene(args,
         scene.node_tree.links.new(
             scene.output_layers_node.outputs['Image'],
             output_node.inputs['Image'])
+        render_args.image_settings.file_format = "PNG"
         render_args.filepath = str(output_image_path)
         try:
             bpy.ops.render.render(write_still=True)
@@ -815,6 +832,9 @@ if __name__ == '__main__':
                         help="# images generated")
     parser.add_argument('--only_depth', default=False, action='store_true',
                         help="depth")
+    parser.add_argument('--n_my_objects', default=2, type=int,
+                        help="Number of objects in selected scene")
+
     argv = sys.argv
     if '--' in argv:
         argv = argv[argv.index('--') + 1:]

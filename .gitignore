@@ -136,3 +136,7 @@ dmypy.json
 clevrtex-gen/data/materials/textures
 clevrtex-gen/data/outd_materials/textures
 output
+
+
+clevrtex-gen/data/clevr_567_train_pose
+clevrtex-gen/data
